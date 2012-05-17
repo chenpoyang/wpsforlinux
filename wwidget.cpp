@@ -1,5 +1,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
+#include <iostream>
 #include "wwidget.h"
 
 WWidget::WWidget(QWidget *parent) :
@@ -16,8 +17,10 @@ void WWidget::init_connection()
 {
     /* 第一个按钮的事件响应 */
     connect(&fir_file_btn, SIGNAL(clicked()), this, SLOT(fir_filename_from_fdlg()));
+    connect(&fir_file_le, SIGNAL(textChanged(QString)), this, SLOT(get_fir_le_text(QString)));
     /* 第二个按钮的事件响应 */
     connect(&sec_file_btn, SIGNAL(clicked()), this, SLOT(sec_filename_from_fdlg()));
+    connect(&sec_file_le, SIGNAL(textChanged(QString)), this, SLOT(get_sec_le_text(QString)));
 
     /* 执行移除重复行操作 */
     connect(&process_btn, SIGNAL(clicked()), this, SLOT(exec_remove_lines()));
@@ -30,6 +33,22 @@ void WWidget::exec_remove_lines()
     sec_file_str = sec_file_le.text();
     judge_file(fir_file_str);
     judge_file(sec_file_str);
+
+std::cout << get_filename(fir_file_str).toStdString() << std::endl;
+}
+
+/* 第一个文本输入域的文体 */
+void WWidget::get_fir_le_text(const QString str)
+{
+    fir_file_str = str;
+    std::cout << "TextChanged" << str.toStdString() << std::endl;
+}
+
+/* 第二个文本输入域的文体 */
+void WWidget::get_sec_le_text(const QString str)
+{
+    sec_file_str = str;
+    std::cout << "TextChanged" << str.toStdString() << std::endl;
 }
 
 /* 判断文件是否存在 */
@@ -98,13 +117,28 @@ void WWidget::init_widget()
 QString WWidget::get_filename(const QString filename)
 {
     bool exist = false;
-
+    int index, len;
+    QString file_str;
+std::cout << filename.toStdString() << std::endl;
     exist = judge_file(filename);
     if (!exist)
     {
-        return;
+        return "";
     }
-/* last editting...!!!!, continue here next time */
+
+    index = filename.lastIndexOf(QRegExp("/"));
+    len = filename.length();
+    if (index >= 0 && index < len)
+    {
+        /* 最右边len - index - 1个字符 */
+        file_str = filename.right(len - index - 1);
+    }
+    else
+    {
+        file_str = filename;
+    }
+
+    return file_str;
 }
 
 WWidget::~WWidget()

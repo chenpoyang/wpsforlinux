@@ -29,7 +29,9 @@ signals:
 
 private slots:
     void fir_filename_from_fdlg();    /* 从文件对话框中选择第一个文件 */
+    void get_fir_le_text(const QString str);    /* 第一个文本输入域的文体 */
     void sec_filename_from_fdlg();    /* 从文件对话框中选择第二个文件 */
+    void get_sec_le_text(const QString str);    /* 第二个文本输入域的文体 */
     void exec_remove_lines();         /* 执行两件文的操作 */
 
 private:
