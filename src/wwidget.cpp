@@ -66,8 +66,9 @@ void WWidget::backup_file(const QString file_abs_path)
     }
 
     filename.append(".bak");
-    std::cout << "dir = " << dir.toStdString() << std::endl;
-    std::cout << "backup filename = " << filename.toStdString() << std::endl;
+
+    /* backup */
+    QFile::copy(file_abs_path, dir.append(filename));
 }
 
 /* 执行两件文的操作 */
