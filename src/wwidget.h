@@ -18,12 +18,15 @@ class WWidget : public QWidget
 public:
     explicit WWidget(QWidget *parent = 0);
     virtual ~WWidget();
+    /* 对给定两文件的绝对路径, 将两文件中相同的行去掉,输入文件分别备份 */
+    void deal_with_file(const QString fir_path, const QString sec_path);
 
 private:
     void init_widget();    /* 初始化控件 */
     void init_connection();    /* 初始化信号与槽 */
     bool judge_file(const QString filename);  /* 判断文件是否存在 */
     QString get_filename(const QString filename);    /* 获取文件名 */
+    void backup_file(const QString file_abs_path);   /* 备份文件 */
 
 signals:
 

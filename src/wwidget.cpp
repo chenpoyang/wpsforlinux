@@ -26,15 +26,69 @@ void WWidget::init_connection()
     connect(&process_btn, SIGNAL(clicked()), this, SLOT(exec_remove_lines()));
 }
 
+/* 对给定两文件的绝对路径, 将两文件中相同的行去掉,输入文件分别备份 */
+void WWidget::deal_with_file(const QString fir_path, const QString sec_path)
+{
+    backup_file(fir_path);
+    backup_file(sec_path);
+    std::cout << "dealing with the files, please wait...." << std::endl;
+}
+
+/* 备份文件, 将文件备份为filename_bak */
+void WWidget::backup_file(const QString file_abs_path)
+{
+    QString str, filename, dir;
+    int index, len;
+
+    /* filename.bak 文件所在的目录 */
+    index = file_abs_path.lastIndexOf(QRegExp("/"));
+    len = file_abs_path.length();
+    if (index >= 0 && index < len)
+    {
+        dir = file_abs_path.left(index + 1);
+    }
+    else
+    {
+        dir = QString("./");
+    }
+
+    /* 获取纯文件名, eg:filename.txt ---> filename */
+    str = get_filename(file_abs_path);
+    len = str.length();
+    index = str.lastIndexOf('.');
+    if (index >= 0 && index < len)
+    {
+        filename = str.left(index);
+    }
+    else
+    {
+        filename = str;
+    }
+
+    filename.append(".bak");
+    std::cout << "dir = " << dir.toStdString() << std::endl;
+    std::cout << "backup filename = " << filename.toStdString() << std::endl;
+}
+
 /* 执行两件文的操作 */
 void WWidget::exec_remove_lines()
 {
+    bool exist = false;
+
     fir_file_str = fir_file_le.text();
     sec_file_str = sec_file_le.text();
-    judge_file(fir_file_str);
-    judge_file(sec_file_str);
+    exist = judge_file(fir_file_str);
+    if (!exist)
+    {
+        return;
+    }
+    exist = judge_file(sec_file_str);
+    if (!exist)
+    {
+        return;
+    }
 
-std::cout << get_filename(fir_file_str).toStdString() << std::endl;
+    deal_with_file(fir_file_str, sec_file_str);
 }
 
 /* 第一个文本输入域的文体 */
@@ -119,7 +173,6 @@ QString WWidget::get_filename(const QString filename)
     bool exist = false;
     int index, len;
     QString file_str;
-std::cout << filename.toStdString() << std::endl;
     exist = judge_file(filename);
     if (!exist)
     {
