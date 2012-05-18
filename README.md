@@ -37,6 +37,7 @@ Enviroment variables:
 Build
 ===========
 There is several methods to build the source, choose the one you prefer:
+
 	1):
 	    qmake
 	    make
