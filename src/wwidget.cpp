@@ -9,8 +9,14 @@
 WWidget::WWidget(QWidget *parent) :
 	QWidget(parent)
 {
-    init_widget();
-    init_connection();
+    init_widget();  /* 初始化界面的控件 */
+    init_connection();  /* 初始化控件之间的消息响应 */
+
+    /* 设置默认的文件路径 */
+    QString fir_str("../test/file1.txt");
+    QString sec_str("../test/file2.txt");
+    fir_file_le.setText(fir_str);
+    sec_file_le.setText(sec_str);
 }
 
 /**
@@ -77,13 +83,6 @@ std::cout << "sec = " << sec_bak.toStdString() << std::endl;
         return; /* do not exist the same line! */
     }
 
-QHash<QString, bool>::const_iterator it = str_hash.begin();
-while (it != str_hash.end())
-{
-    std::cout << ((QString)it.key()).toStdString() << std::endl;
-    ++it;
-}
-
     QFile::remove(fir_path);
     QFile::remove(sec_path);
     reflesh_file(fir_path, fir_bak, str_hash);
@@ -104,9 +103,10 @@ void WWidget::reflesh_file(const QString filename,
         QFile::remove(filename);
     }
 
-    if (!in.open(QIODevice::ReadOnly | QIODevice::Text) ||
-            out.open(QIODevice::ReadWrite | QIODevice::Text))
+    if ((!in.open(QIODevice::ReadOnly | QIODevice::Text)) ||
+            (!out.open(QIODevice::Append | QIODevice::Text)))
     {
+        std::cout << "open file error!" << std::endl;
         return;
     }
     QTextStream in_ts(&in), out_ts(&out);
@@ -119,9 +119,11 @@ void WWidget::reflesh_file(const QString filename,
             continue;   /* 相同行, 不写入文件 */
         }
 
+        str.append("\n");
         out_ts << str;
+        std::cout << str.toStdString() << std::endl;
     }
-    out_ts.flush();
+    out.flush();
 }
 
 /* 备份文件, 将文件备份为filename_bak */
