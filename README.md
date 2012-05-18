@@ -49,3 +49,5 @@ There is several methods to build the source, choose the one you prefer:
 	3):
 	    a):rename Make.Linux to Makefile(both wpsforlinux/Make.Linux and wpsforlinux/src/Make.Linux)
 		b):type 'make' to build to source
+
+		or just run usemake.sh
