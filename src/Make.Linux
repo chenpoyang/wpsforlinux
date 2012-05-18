@@ -1,0 +1,55 @@
+####################################################################
+# For building: ALL_T
+# make version:	GNU Make 3.82
+# g++ version:	gcc version 4.5.1
+# gcc version:	g++ version 4.5.1
+####################################################################
+
+#### === CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT === ####
+
+########## Compiler, tools and options
+
+CC			= gcc
+CXX			= g++
+# Qt Meta Object Compiler
+MOC			= moc
+CFLAGS		= -O2 -Wall -g $(DEFINES)
+CXXFLAGS	= -O2 -Wall -g $(DEFINES)
+
+#------------QtSDK------------
+QTSDK		= $(QTSDK_HOME)
+LOAD		= -L$(QTSDK)/lib
+#------------QtSDK------------
+
+# all LIB
+ALL_LIB		= -lpthread -lQtGui -lQtCore
+
+# all target
+ALL_T		= main
+
+# all object
+ALL_OBJ	= wwidget.o main.o moc_wwidget.o
+
+# Targets start hereR
+all:	$(ALL_OBJ) $(ALL_T)
+
+$(ALL_T): $(ALL_OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $(LOAD) $(ALL_LIB) $(ALL_OBJ)
+
+clean:
+	$(RM) $(ALL_OBJ) $(ALL_T) moc_*.cpp
+
+distclean:
+	$(RM) $(ALL_OBJ) $(ALL_T) moc_*.cpp Makefile
+
+# list targets that do not create files
+.PHONY: clean all distclean
+
+# DO NOT DELETE
+wwidget.o		: wwidget.cpp wwidget.h
+main.o			: main.cpp wwidget.h
+moc_wwidget.o	: moc_wwidget.cpp wwidget.h
+
+#MOC
+moc_%.cpp		: %.h
+	moc $< -o $@

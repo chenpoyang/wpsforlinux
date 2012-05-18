@@ -1,7 +1,10 @@
 all:
-	cd src && qmake && make
+	cd src && make
 
-.PHONY: clean
+.PHONY: clean distclean all
 
 clean:
-	cd src && make distclean
+	cd src && make clean
+
+distclean:
+	cd src && make clean && cd .. && rm Makefile

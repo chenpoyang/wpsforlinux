@@ -1,8 +1,8 @@
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QList>
-#include <QHash>
-#include <QTextStream>
+#include <QtGui/QFileDialog>
+#include <QtGui/QMessageBox>
+#include <QtCore/QList>
+#include <QtCore/QHash>
+#include <QtCore/QTextStream>
 #include <iostream>
 #include "wwidget.h"
 

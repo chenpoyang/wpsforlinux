@@ -10,3 +10,7 @@
 
 4):QList:
 	http://doc.qt.nokia.com/4.7/qlist.html#details
+
+5):QtSDK Download and Compile:
+	Download:http://qt.nokia.com/downloads/linux-x11-cpp
+	How to Build:http://qt-project.org/doc/qt-4.8/install-x11.html
