@@ -1,5 +1,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QList>
+#include <QHash>
+#include <QTextStream>
 #include <iostream>
 #include "wwidget.h"
 
@@ -29,15 +32,103 @@ void WWidget::init_connection()
 /* 对给定两文件的绝对路径, 将两文件中相同的行去掉,输入文件分别备份 */
 void WWidget::deal_with_file(const QString fir_path, const QString sec_path)
 {
-    backup_file(fir_path);
-    backup_file(sec_path);
-    std::cout << "dealing with the files, please wait...." << std::endl;
+    /* 备份文件 */
+    const QString fir_bak = backup_file(fir_path);
+    const QString sec_bak = backup_file(sec_path);
+    QHash<QString, bool> str_hash;
+    QString fir_line, sec_line;
+
+    QFile fir_in(fir_bak), sec_in(sec_bak);
+    QTextStream fir_ts(&fir_in), sec_ts(&sec_in);
+
+std::cout << "dealing with the files, please wait...." << std::endl;
+std::cout << "fir = " << fir_bak.toStdString() << std::endl;
+std::cout << "sec = " << sec_bak.toStdString() << std::endl;
+
+    if (!fir_in.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        std::cout << "can not open file:" << fir_bak.toStdString() << std::endl;
+        return;
+    }
+    if (!sec_in.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        std::cout << "can not open file:" << sec_bak.toStdString() << std::endl;
+        return;
+    }
+
+    /* 寻找相同的行, 保存于str_hash中 */
+    while (!fir_ts.atEnd())
+    {
+        sec_ts.seek(0);
+        fir_line = fir_ts.readLine();
+        while (!sec_ts.atEnd())
+        {
+            sec_line = sec_ts.readLine();
+            /* 相等 */
+            if (QString::compare(fir_line, sec_line) == 0)
+            {
+                str_hash[fir_line] = true;
+            }
+            else
+            {
+                str_hash[fir_line] = false;
+            }
+        }
+    }
+
+    if (str_hash.size() <= 0)
+    {
+        return; /* do not exist the same line! */
+    }
+
+QHash<QString, bool>::const_iterator it = str_hash.begin();
+while (it != str_hash.end())
+{
+    std::cout << ((QString)it.key()).toStdString() << std::endl;
+    ++it;
+}
+
+    QFile::remove(fir_path);
+    QFile::remove(sec_path);
+    reflesh_file(fir_path, fir_bak, str_hash);
+    reflesh_file(sec_path, sec_bak, str_hash);
+}
+
+/* 删除相同的行,并更新文件 */
+void WWidget::reflesh_file(const QString filename,
+                           const QString bak,
+                           const QHash<QString, bool> &str_hash)
+{
+    QFile in(bak);
+    QFile out(filename);
+    QString str;
+
+    if (QFile::exists(filename))
+    {
+        QFile::remove(filename);
+    }
+
+    if (!in.open(QIODevice::ReadOnly | QIODevice::Text) ||
+            out.open(QIODevice::ReadWrite | QIODevice::Text))
+    {
+        return;
+    }
+    QTextStream in_ts(&in), out_ts(&out);
+
+    while (!in_ts.atEnd())
+    {
+        str = in_ts.readLine();
+        if (str_hash[str] == true)
+        {
+            continue;   /* 相同行, 不写入文件 */
+        }
+    }
 }
 
 /* 备份文件, 将文件备份为filename_bak */
-void WWidget::backup_file(const QString file_abs_path)
+QString WWidget::backup_file(const QString file_abs_path)
 {
-    QString str, filename, dir;
+    QString str, filename, dir, bak_filename;
     int index, len;
 
     /* filename.bak 文件所在的目录 */
@@ -66,9 +157,18 @@ void WWidget::backup_file(const QString file_abs_path)
     }
 
     filename.append(".bak");
+    bak_filename = dir.append(filename);
 
     /* backup */
-    QFile::copy(file_abs_path, dir.append(filename));
+    if (QFile::exists(bak_filename))
+    {
+        QMessageBox::warning(this, tr("Warnning"), tr("Previous backup exist, overwrite!"));
+        QFile::remove(bak_filename);
+    }
+    QFile::copy(file_abs_path, bak_filename);
+    std::cout << "backup filename = " <<  dir.toStdString() << std::endl;
+
+    return dir;
 }
 
 /* 执行两件文的操作 */
@@ -96,14 +196,12 @@ void WWidget::exec_remove_lines()
 void WWidget::get_fir_le_text(const QString str)
 {
     fir_file_str = str;
-    std::cout << "TextChanged" << str.toStdString() << std::endl;
 }
 
 /* 第二个文本输入域的文体 */
 void WWidget::get_sec_le_text(const QString str)
 {
     sec_file_str = str;
-    std::cout << "TextChanged" << str.toStdString() << std::endl;
 }
 
 /* 判断文件是否存在 */

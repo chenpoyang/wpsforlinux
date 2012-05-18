@@ -26,7 +26,7 @@ private:
     void init_connection();    /* 初始化信号与槽 */
     bool judge_file(const QString filename);  /* 判断文件是否存在 */
     QString get_filename(const QString filename);    /* 获取文件名 */
-    void backup_file(const QString file_abs_path);   /* 备份文件 */
+    QString backup_file(const QString file_abs_path);   /* 备份文件 */
 
 signals:
 
@@ -36,6 +36,8 @@ private slots:
     void sec_filename_from_fdlg();    /* 从文件对话框中选择第二个文件 */
     void get_sec_le_text(const QString str);    /* 第二个文本输入域的文体 */
     void exec_remove_lines();         /* 执行两件文的操作 */
+    /* 删除相同的行,并更新文件 */
+    void reflesh_file(const QString filename, const QString bak, const QHash<QString, bool> &str_hash);
 
 private:
     /* 两个选择文件的按钮, 及一个执行命令的按钮 */
