@@ -3,7 +3,7 @@
 
 2):makefile without qmake
 	http://www.qtcentre.org/threads/3559-makefile-without-using-QMake
-	http://doc.trolltech.com/4.1/moc.html#writing-make-rules-for-invoking (使用元对象编译器)
+	http://doc.trolltech.com/4.1/moc.html#writing-make-rules-for-invoking (using moc compiler)
 
 3):stl::list:
 	http://www.cplusplus.com/reference/stl/list/
