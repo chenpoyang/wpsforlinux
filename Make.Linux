@@ -1,0 +1,7 @@
+all:
+	cd src && qmake && make
+
+.PHONY: clean
+
+clean:
+	cd src && make distclean
