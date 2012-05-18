@@ -69,10 +69,6 @@ std::cout << "sec = " << sec_bak.toStdString() << std::endl;
             {
                 str_hash[fir_line] = true;
             }
-            else
-            {
-                str_hash[fir_line] = false;
-            }
         }
     }
 
@@ -122,7 +118,10 @@ void WWidget::reflesh_file(const QString filename,
         {
             continue;   /* 相同行, 不写入文件 */
         }
+
+        out_ts << str;
     }
+    out_ts.flush();
 }
 
 /* 备份文件, 将文件备份为filename_bak */
